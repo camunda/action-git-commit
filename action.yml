@@ -1,0 +1,25 @@
+name: Commit pending changes and push to origin
+description: |
+  This action commit the changes and push them to origin, if any changes are detected.
+  If not, this action does nothing.
+
+  This action commits the changes using the author from the last commit.
+inputs:
+  commit-message:
+    required: false
+    default: Commit changes
+    description: The commit message to use when changes have been detected.
+
+outputs:
+  changes-pushed:
+    description: Are there any changes that have been pushed?
+    value: ${{ steps.push.outputs.changes-pushed }}
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      id: push
+      name: Commit changes
+      run: ${{ github.action_path }}/commit-changes.sh "${{ inputs.commit-message }}"
+
