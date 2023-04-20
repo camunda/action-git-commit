@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-COMMIT_MESSAGE="${1:-"Commit changes"}"
+COMMIT_MESSAGE="${1:?"Specify the commit message"}"
 
 diff="$(git diff)"
 if [ -z "$diff" ]
