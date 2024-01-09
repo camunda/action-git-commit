@@ -18,9 +18,9 @@ origin_branch="origin/main"
 #   3. (normally not needed)
 max_commit=3
 
-last_author="$(git log --max-count=$max_commit author="$(git log --max-count 1 --pretty="$git_log_format")"
+last_author="$(git log --max-count=$max_commit author="$(git log --max-count 1 --pretty="$git_log_format")")"
 
-nb_commits_last_author="$(git log --format="$git_log_format" "${origin_branch}.." | grep --fixed-strings "$last_author" | wc --lines)"
+nb_commits_last_author="$(git log --format="$git_log_format" "${origin_branch}.." | grep --fixed-strings --count "$last_author")"
 
 if [ "$nb_commits_last_author" -ge "$max_commit" ]
 then
@@ -29,5 +29,5 @@ then
     exit 255
 fi
 
-echo "$last_author commited $nb_commits_last_author compared to the origin branch: $origin_banch."
+echo "$last_author commited $nb_commits_last_author compared to the origin branch: $origin_branch."
 exit 0
