@@ -19,7 +19,11 @@ runs:
   using: composite
   steps:
     - shell: bash
+      id: block
+      name: Block loops
+      run: ${{ github.action_path }}/block-loops.sh
+
+    - shell: bash
       id: push
       name: Commit changes
       run: ${{ github.action_path }}/commit-changes.sh "${{ inputs.commit-message }}"
-
