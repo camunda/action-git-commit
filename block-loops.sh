@@ -1,0 +1,48 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# The output format from "git log"
+git_log_format="format:%an"
+
+# The branch to find changes against.
+# Pull requests are most of the time made against the "main" branch.
+origin_branch="origin/main"
+
+# The maximum allowed number of commits from the last author.
+# This should be enough to allow a few commits to be made, but not too much to
+# limits the number of GHA runs in case we run into an endless loop.
+# Typically, 3 commits should allow:
+#   1. An original update from Renovate
+#   2. Updating golden files after the update
+#   3. (normally not needed)
+max_commit=3
+
+# First, we need to test if the upstream branch exists. If not, we assume the
+# repository wasn't cloned with all the branches and the script can't detect if
+# there are "too many commits" to break the loop.
+# In this case, we continue with a warning.
+if ! git show-ref --quiet "refs/remotes/$origin_branch"
+then
+    echo "::warning::No '$origin_branch' branch found, unable to check if commits create endless GitHub Action run loops"
+    echo "::warning::Run 'actions/checkout' with 'fetch-depth: 0' to fetch all the branches."
+    exit 0
+fi
+
+# Display the list of commits that we are taking into account...
+echo "::group::git commits"
+git log --format="oneline" "${origin_branch}.."
+echo "::endgroup::"
+
+last_author="$(git log --max-count 1 --pretty="$git_log_format")"
+nb_commits_last_author="$(git log --format="$git_log_format" "${origin_branch}.." | grep --fixed-strings --count "$last_author")"
+
+if [ "$nb_commits_last_author" -ge "$max_commit" ]
+then
+    echo "::error::Too many commits made by $last_author."
+    echo "::error::Stopping GitHub Action now because it may be running in an endless loop."
+    exit 255
+fi
+
+echo "::notice::$last_author commited $nb_commits_last_author compared to the origin branch: $origin_branch."
+exit 0
