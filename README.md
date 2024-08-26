@@ -7,7 +7,7 @@ This is mostly useful in the case were an automated process (like Renovate)
 updates some value somewhere in the repository and another process requires to
 propagate the Renovate update to multiple files (aka. "golden files").
 
-> ![WARNING]
+> [!WARNING]
 >
 > This action will fail if there are "too many" commits (more than 3 by
 > default) done by the same author in the opened branch.
