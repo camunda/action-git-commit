@@ -10,6 +10,14 @@ inputs:
     default: Commit changes
     description: The commit message to use when changes have been detected.
 
+  author-name:
+    required: false
+    description: Name of the commit author, if not set the author of the previous commit will be used.
+
+  author-email:
+    required: false
+    description: Email of the commit author, if not set the author of the previous commit will be used.
+
 outputs:
   changes-pushed:
     description: Are there any changes that have been pushed?
@@ -26,4 +34,4 @@ runs:
     - shell: bash
       id: push
       name: Commit changes
-      run: ${{ github.action_path }}/commit-changes.sh "${{ inputs.commit-message }}"
+      run: ${{ github.action_path }}/commit-changes.sh "${{ inputs.commit-message }}" "${{ inputs.author-name }}" "${{ inputs.author-email }}"
