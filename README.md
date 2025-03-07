@@ -65,6 +65,17 @@ steps:
       commit-message: Hey ho, here are some changes!
 ```
 
+You can specify a commit author:
+
+```yaml
+steps:
+  - uses: camunda-cloud/action-git-commit@v1
+    with:
+      commit-message: Hey ho, here are some changes!
+      author-name: Bob
+      author-email: bob@example.com
+```
+
 The action output a `changes-pushed` value if changes have been pushed:
 
 ```yaml

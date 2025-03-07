@@ -3,6 +3,14 @@
 set -euo pipefail
 
 COMMIT_MESSAGE="${1:?"Specify the commit message"}"
+AUTHOR_NAME="${2:-""}"
+AUTHOR_EMAIL="${3:-""}"
+
+if ([ -n "$AUTHOR_NAME" ] && [ -z "$AUTHOR_EMAIL"]) || ( [ -z "$AUTHOR_NAME" ] && [ -n "$AUTHOR_EMAIL" ])
+then
+    echo "Either both AUTHOR_NAME and AUTHOR_EMAIL must be defined, or neither should be"
+    exit 1
+fi
 
 diff="$(git diff)"
 if [ -z "$diff" ]
@@ -17,11 +25,17 @@ echo "================="
 git status --short --branch
 echo "================="
 
-last_author="$(git log --max-count 1 --pretty=format:%an)"
-last_email="$(git log --max-count 1 --pretty=format:%ae)"
+if [ -z "$AUTHOR_NAME" ]
+then
+    echo "No author specified, retrieving author of previous commit"
+    AUTHOR_NAME="$(git log --max-count 1 --pretty=format:%an)"
+    AUTHOR_EMAIL="$(git log --max-count 1 --pretty=format:%ae)"
+fi
 
-git config user.name "$last_author"
-git config user.email "$last_email"
+echo "Setting commit author: $AUTHOR_NAME <$AUTHOR_EMAIL>"
+git config user.name "$AUTHOR_NAME"
+git config user.email "$AUTHOR_EMAIL"
+
 git add .
 git commit --message "$COMMIT_MESSAGE"
 git push
