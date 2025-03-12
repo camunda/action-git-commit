@@ -29,6 +29,7 @@ runs:
     - shell: bash
       id: block
       name: Block loops
+      if: github.ref != 'refs/heads/main'
       run: ${{ github.action_path }}/block-loops.sh
 
     - shell: bash
