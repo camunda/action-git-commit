@@ -1,6 +1,7 @@
 #!/bin/bash
 
 set -euo pipefail
+set -x
 
 # The output format from "git log"
 git_log_format="format:%an"
