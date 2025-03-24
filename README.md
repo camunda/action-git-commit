@@ -53,14 +53,14 @@ current one, in order to detect endless commits.
 
 ```yaml
 steps:
-  - uses: camunda-cloud/action-git-commit@v1
+  - uses: camunda/action-git-commit@v1
 ```
 
 You can specify an alternative Git commit message:
 
 ```yaml
 steps:
-  - uses: camunda-cloud/action-git-commit@v1
+  - uses: camunda/action-git-commit@v1
     with:
       commit-message: Hey ho, here are some changes!
 ```
@@ -69,7 +69,7 @@ You can specify a commit author:
 
 ```yaml
 steps:
-  - uses: camunda-cloud/action-git-commit@v1
+  - uses: camunda/action-git-commit@v1
     with:
       commit-message: Hey ho, here are some changes!
       author-name: Bob
@@ -80,7 +80,7 @@ The action output a `changes-pushed` value if changes have been pushed:
 
 ```yaml
 steps:
-  - uses: camunda-cloud/action-git-commit@v1
+  - uses: camunda/action-git-commit@v1
     id: commit
 
   - if: ${{ steps.commit.outputs.changes-pushed == 'true' }}

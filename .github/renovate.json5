@@ -1,5 +1,5 @@
 {
   "extends": [
-    "github>camunda-cloud/renovate-config:sre",
+    "github>camunda/renovate-config:sre",
   ],
 }
