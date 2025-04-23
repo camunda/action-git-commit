@@ -12,7 +12,7 @@ then
     exit 1
 fi
 
-diff="$(git diff)"
+diff="$(git status --short)"
 if [ -z "$diff" ]
 then
     echo "No changes detected"
