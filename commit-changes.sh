@@ -12,6 +12,21 @@ then
     exit 1
 fi
 
+ignore_file="$(mktemp)"
+# Additional "ignore file", in addition to the .gitignore file of the repository.
+git config core.excludesFile "$ignore_file"
+
+cat <<EOF > "$ignore_file"
+## Ignore well known files
+# https://github.com/google-github-actions/auth#prerequisites
+gha-creds-*
+EOF
+
+echo "Will ignore by default the following patterns:"
+echo "=============================================="
+cat "$ignore_file"
+echo "=============================================="
+
 diff="$(git status --short)"
 if [ -z "$diff" ]
 then
