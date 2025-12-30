@@ -10,7 +10,8 @@ propagate the Renovate update to multiple files (aka. "golden files").
 > [!WARNING]
 >
 > This action will fail if there are "too many" commits (more than 3 by
-> default) done by the same author in the opened branch.
+> default) done by the same author using the "commit message" that would be
+> used to commit the changes later on, in the opened branch.
 >
 > This is a protection mechanism to prevent GitHub Action to create too many
 > new runs because a change was made from GitHub Action itself.
