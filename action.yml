@@ -30,9 +30,15 @@ runs:
       id: block
       name: Block loops
       if: github.ref != 'refs/heads/main'
-      run: ${{ github.action_path }}/block-loops.sh
+      env:
+        MESSAGE: "${{ inputs.commit-message }}"
+      run: ${{ github.action_path }}/block-loops.sh "${{ env.MESSAGE }}"
 
     - shell: bash
       id: push
       name: Commit changes
-      run: ${{ github.action_path }}/commit-changes.sh "${{ inputs.commit-message }}" "${{ inputs.author-name }}" "${{ inputs.author-email }}"
+      env:
+        MESSAGE: "${{ inputs.commit-message }}"
+        AUTHOR_NAME: "${{ inputs.author-name }}"
+        AUTHOR_EMAIL: "${{ inputs.author-email }}"
+      run: ${{ github.action_path }}/commit-changes.sh "${{ env.MESSAGE }}" "${{ env.AUTHOR_NAME }}" "${{ env.AUTHOR_EMAIL }}"

@@ -2,8 +2,7 @@
 
 set -euo pipefail
 
-# The output format from "git log"
-git_log_format="format:%an"
+expected_commit_subject="${1:?"Set the commit message that will be used by this action"}"
 
 # The branch to find changes against.
 # Pull requests are most of the time made against the "main" branch.
@@ -34,15 +33,25 @@ echo "::group::git commits"
 git log --format="oneline" "${origin_branch}.."
 echo "::endgroup::"
 
-last_author="$(git log --max-count 1 --pretty="$git_log_format")"
-nb_commits_last_author="$(git log --format="$git_log_format" "${origin_branch}.." | grep --fixed-strings --count "$last_author")"
+# Find the author of the last commit. "%an" is the author name.
+last_author="$(git log --max-count 1 --pretty="format:%an")"
 
-if [ "$nb_commits_last_author" -ge "$max_commit" ]
+echo "Will try to find commits made by: \"$last_author\" with subject: \"$expected_commit_subject\""
+
+# Find the number of commits made:
+# 1. By the last author (%an)
+# 2. Using the commit subject this action would use later on (%s)
+# If there are "too many" commits matching these criteria, we consider we are
+# in an endless loop of automated commits.
+expected="$last_author = $expected_commit_subject"
+nb_commits_repeated="$(git log --format="format:%an = %s" "${origin_branch}.." | grep --fixed-strings --count "$expected" || true)"
+
+if [ "$nb_commits_repeated" -ge "$max_commit" ]
 then
-    echo "::error::Too many commits made by $last_author."
+    echo "::error::Too many commits (total=$nb_commits_repeated commits repeated) made by $last_author with subject: $expected_commit_subject."
     echo "::error::Stopping GitHub Action now because it may be running in an endless loop."
     exit 255
 fi
 
-echo "::notice::$last_author commited $nb_commits_last_author compared to the origin branch: $origin_branch."
+echo "::notice::$last_author commited $nb_commits_repeated commits with subject \"$expected_commit_subject\" compared to the origin branch: $origin_branch."
 exit 0
