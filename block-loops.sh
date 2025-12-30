@@ -44,7 +44,7 @@ echo "Will try to find commits made by: \"$last_author\" with subject: \"$expect
 # If there are "too many" commits matching these criteria, we consider we are
 # in an endless loop of automated commits.
 expected="$last_author = $expected_commit_subject"
-nb_commits_repeated="$(git log --format="format:%an = %s" "${origin_branch}.." | grep --fixed-strings --count "$expected")"
+nb_commits_repeated="$(git log --format="format:%an = %s" "${origin_branch}.." | grep --fixed-strings --count "$expected" || true)"
 
 if [ "$nb_commits_repeated" -ge "$max_commit" ]
 then
@@ -53,5 +53,5 @@ then
     exit 255
 fi
 
-echo "::notice::$last_author commited $nb_commits_repeated compared to the origin branch: $origin_branch."
+echo "::notice::$last_author commited $nb_commits_repeated commits with subject \"$expected_commit_subject\" compared to the origin branch: $origin_branch."
 exit 0
