@@ -41,10 +41,15 @@ echo "Will try to find commits made by: \"$last_author\" with subject: \"$expect
 # Find the number of commits made:
 # 1. By the last author (%an)
 # 2. Using the commit subject this action would use later on (%s)
+#
 # If there are "too many" commits matching these criteria, we consider we are
 # in an endless loop of automated commits.
+#
+# We only check the last "$max_commit" commits to see if they are repeated: if
+# they are the same and they are all match the "expected" commits to block,
+# then stop the workflow.
 expected="$last_author = $expected_commit_subject"
-nb_commits_repeated="$(git log --format="format:%an = %s" "${origin_branch}.." | grep --fixed-strings --count "$expected" || true)"
+nb_commits_repeated="$(git log --max-count "$max_commit" --format="format:%an = %s" "${origin_branch}.." | grep --fixed-strings --count "$expected" || true)"
 
 if [ "$nb_commits_repeated" -ge "$max_commit" ]
 then
@@ -53,5 +58,5 @@ then
     exit 255
 fi
 
-echo "::notice::$last_author commited $nb_commits_repeated commits with subject \"$expected_commit_subject\" compared to the origin branch: $origin_branch."
+echo "::notice::$last_author commited $nb_commits_repeated commits with subject \"$expected_commit_subject\" compared to the origin branch: $origin_branch (within the last $max_commit commits)."
 exit 0
