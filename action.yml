@@ -18,6 +18,11 @@ inputs:
     required: false
     description: Email of the commit author, if not set the author of the previous commit will be used.
 
+  github-token:
+    required: false
+    description: An optional GitHub token to authenticate with GitHub. If not set, the default ambient credentials will be used.
+    default: ""
+
 outputs:
   changes-pushed:
     description: Are there any changes that have been pushed?
@@ -41,4 +46,5 @@ runs:
         MESSAGE: "${{ inputs.commit-message }}"
         AUTHOR_NAME: "${{ inputs.author-name }}"
         AUTHOR_EMAIL: "${{ inputs.author-email }}"
+        GITHUB_TOKEN: "${{ inputs.github-token }}"
       run: ${{ github.action_path }}/commit-changes.sh "${{ env.MESSAGE }}" "${{ env.AUTHOR_NAME }}" "${{ env.AUTHOR_EMAIL }}"
